@@ -1,4 +1,4 @@
-#CHD Summer School 2019
+# CHD Summer School 2019
 
 Hosted by the University of Melbourne's School of Psychology
 
