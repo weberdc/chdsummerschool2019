@@ -1,5 +1,7 @@
-# chdsummerschool2019
-CHD Summer School 2019 - University of Melbourne, School of Psychology
+#CHD Summer School 2019
 
-_15-20 December, 2019_
+Hosted by the University of Melbourne's School of Psychology
+
+When: _15-20 December, 2019_
+
 
