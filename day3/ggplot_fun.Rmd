@@ -1,0 +1,109 @@
+---
+title: "GGPlot2 Fun"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Getting started
+
+The first thing to do in our analysis is load the R packages that we'll use to do the work:
+
+```{r packageload, message=FALSE}
+library(here)
+library(tidyverse)
+library(skimr)
+library(RColorBrewer)
+datafile <- "frames_ex2.csv"
+loc <- here("data", datafile)  # "frames_ex2.csv")
+frames <- read_csv(file = loc)  # use the tidyverse function 'read_csv()'
+glimpse(frames)
+```
+
+## Our first plot
+
+```{r firstggplot2}
+frames_small <- frames %>%
+  group_by(age, condition, sample_size) %>%
+  summarise(response = mean(response)) %>%
+  ungroup()
+
+frames_small %>% ggplot(
+  aes(
+    x = age, 
+    y = response,
+    colour = condition
+  )
+) +
+geom_point(size = 3) + # points, lines, histograms
+geom_rug()  # dashes on axes showing where the data points are
+```
+
+## Second plot
+
+```{r secondggplot2}
+frames_small %>% ggplot(
+  aes(
+    x = age, 
+    y = response,
+    colour = condition
+  )
+) +
+geom_point(size = 3) + # points, lines, histograms
+geom_rug() + # dashes on axes showing where the data points are
+#facet_wrap(vars(sample_size)), but use tilda instead
+#facet_wrap(~sample_size)
+facet_grid(condition~sample_size) + # condition on rows, sample_size on columns
+theme_bw() + # pretty (there is an APA theme too, but it's not 'theme_apa')
+labs(
+  title = "Response by age",
+  subtitle = "Varying condition by sample size",
+  x = "Age (years)",
+  y = "Response (1=no, 9=yes)"
+)
+```
+
+## Frames test (3rd plot)
+
+```{r thirdggplot2}
+frames_test <- frames %>%
+  group_by(test_item, condition, sample_size) %>%
+  summarise(response = mean(response)) %>%
+  ungroup()
+
+frames_test %>% ggplot(
+  mapping = aes(
+    x = test_item,
+    y = response,
+    colour = sample_size,  # condition,
+    group = sample_size
+  )
+) +
+geom_line() +
+geom_point(size=3.5, alpha=0.5) +
+geom_rug () +
+scale_color_brewer(palette = "Set1") +
+facet_wrap(~condition) +
+theme_bw()
+
+#frames_test %>% ggplot(
+#  aes(
+#    x = test_item, 
+#    y = response,
+#    colour = condition
+#  )
+#) +
+#geom_point(size = 3) + # points, lines, histograms
+#geom_rug()  # dashes on axes showing where the data points are
+```
+
+
+
+
+
+
+
+
+

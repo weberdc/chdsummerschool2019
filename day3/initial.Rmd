@@ -1,0 +1,118 @@
+---
+title: "Exploring the data"
+author: "Derek Weber"
+date: 18 December 2019
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Getting started
+
+The first thing to do in our analysis is load the R packages that we'll use to do the work:
+
+```{r packageload, message=FALSE}
+library(here)
+library(tidyverse)
+library(skimr)
+```
+
+```{r filedeclaration}
+datafile <- "frames_ex2.csv"
+```
+
+The next step is to load the dataset itself. The data from the sampling frames experiment are stored in the "`r datafile`" file:
+
+```{r dataimport}
+loc <- here("data", datafile)  # "frames_ex2.csv")
+frames <- read_csv(file = loc)  # use the tidyverse function 'read_csv()'
+```
+
+The dataset has been imported as a tibble. Let's take a quick look at the data. Each row in the dataset is a single response, and each column is a variable:
+
+```{r printframes}
+frames
+```
+
+An alternative way to view the tibble that sometimes looks nicer is to use the `glimpse()` function:
+
+```{r glimpseframes}
+glimpse(frames)
+```
+
+Finally, as a quick first pass, we can use the `skim()` fucntion to get a simple overview of each variable:
+
+```{r skimframes}
+skim(frames)
+```
+
+## group_by, summarise, etc
+
+I'm going to do some simple grouping and summarising
+
+```{r groupbyintro}
+frames %>%
+  group_by(
+    test_item, sample_size, n_obs, condition
+  ) %>%  # independent variables
+  summarise(
+    response = mean(response)
+  ) %>%                # dependent variable (response)
+  ungroup()  # important to do to avoid strange errors
+
+frames %>%
+  group_by(
+    test_item
+  ) %>%
+  summarise(
+    mean_resp = mean(response),
+    sd_resp = sd(response),
+    count = n()
+  ) %>%
+  ungroup()
+
+# frames %>% pull(test_item)  ==  frames$test_item
+```
+
+Practise filtering, arranging, selecting, and mutating
+
+```{r usingfilter}
+average_response <- frames %>%
+  group_by(test_item, sample_size, n_obs, condition) %>%
+  summarise(response = mean(response)) %>%
+  ungroup()
+
+average_response_small <- average_response %>%
+  filter(sample_size == "small") %>%
+  arrange(condition) %>%  # sort by 'condition' values
+  select(test_item, condition, response)  # pull out these columns only
+
+average_response_small <- average_response_small %>%
+  mutate(generalisation = response/9) %>%
+  select(-response)  # get rid of 'response' column but keep the others
+
+average_response_small
+
+```
+
+
+ggplot2
+
+```{r firstggplot2}
+average_response_small %>% ggplot(
+  aes(x = test_item, y = generalisation)
+) +
+geom_point()  # points, lines, histograms
+```
+
+
+
+
+
+
+
+
+
+
